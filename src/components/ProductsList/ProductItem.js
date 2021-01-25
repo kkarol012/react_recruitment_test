@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Texts from "../UI/Texts";
 
 const Item = styled.div`
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 45px 100px;
   display: grid;
 `;
 
@@ -14,6 +14,7 @@ export default function ProductItem({ item, ...props }) {
   return (
     <Item {...props}>
       <Texts size="16">{item.name}</Texts>
+      <Texts size="16">cena:</Texts>
       <JustifiedText size="18">
         {parseFloat(item.price).toFixed(2)} zł
       </JustifiedText>
