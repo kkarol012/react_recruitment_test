@@ -1,4 +1,5 @@
 import React from "react";
+import CartAmount from "../Cart/CartAmount";
 import ProductItem from "./ProductItem";
 
 export default function ProductsList({ items = [], ...props }) {
@@ -10,6 +11,7 @@ export default function ProductsList({ items = [], ...props }) {
       {items.map((el) => (
         <li key={el.pid}>
           <ProductItem item={el} />
+          <CartAmount min={el.min} max={el.max} />
         </li>
       ))}
     </ul>

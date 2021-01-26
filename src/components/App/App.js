@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { getCart } from "../../api/actions";
 import ProductsList from "../ProductsList/ProductsList";
