@@ -11,7 +11,12 @@ export default function ProductsList({ items = [], ...props }) {
       {items.map((el) => (
         <li key={el.pid}>
           <ProductItem item={el} />
-          <CartAmount min={el.min} max={el.max} />
+          <CartAmount
+            min={el.min}
+            max={el.max}
+            pid={el.pid}
+            is_blocked={el.isBlocked}
+          />
         </li>
       ))}
     </ul>

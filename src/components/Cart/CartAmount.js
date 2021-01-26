@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Texts from "../UI/Texts";
 import styled, { css } from "styled-components";
+import { checkProduct } from "../../api/actions";
 
 const BlockedIcon = css`
   color: gray;
@@ -13,7 +14,7 @@ const ActiveIcon = css`
 `;
 
 const FontAwesomeIconClickable = styled(FontAwesomeIcon)`
-  ${(props) => (props.isBlocked ? BlockedIcon : ActiveIcon)}
+  ${(props) => (props.is_blocked ? BlockedIcon : ActiveIcon)}
 `;
 
 const Container = styled.div`
@@ -23,32 +24,44 @@ const Container = styled.div`
   grid-gap: 8px;
 `;
 
-export default function CartAmount({ min, max, isBlocked }) {
+export default function CartAmount({ min, max, is_blocked = false, pid }) {
   const [amount, setAmount] = useState(min);
 
   function decreaseAmount() {
-    if (!isBlocked && amount > min) {
-      setAmount(amount - 1);
+    if (is_blocked || amount <= min) {
+      return;
     }
+    setAmount(amount - 1);
+    verifyAmount(amount - 1);
   }
 
   function increaseAmount() {
-    if (!isBlocked && amount < max) {
-      setAmount(amount + 1);
+    if (is_blocked || amount >= max) {
+      return;
     }
+    setAmount(amount + 1);
+    verifyAmount(amount + 1);
+  }
+
+  function verifyAmount(quantity) {
+    const data = {
+      quantity: quantity,
+      pid: pid,
+    };
+    checkProduct(data, () => setAmount(min));
   }
 
   return (
     <Container>
       <FontAwesomeIconClickable
-        isBlocked={isBlocked}
+        is_blocked={is_blocked ? 1 : 0}
         icon={faMinus}
         color={"red"}
         onClick={decreaseAmount}
       />
       <Texts align="center">{amount}</Texts>
       <FontAwesomeIconClickable
-        isBlocked={isBlocked}
+        is_blocked={is_blocked ? 1 : 0}
         icon={faPlus}
         color={"green"}
         onClick={increaseAmount}
