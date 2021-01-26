@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Texts from "../UI/Texts";
 import styled, { css } from "styled-components";
 import { checkProduct } from "../../api/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { getProductQuantity, setProductQuantity } from "../../app/cartSlice";
 
 const BlockedIcon = css`
   color: gray;
@@ -25,22 +27,26 @@ const Container = styled.div`
 `;
 
 export default function CartAmount({ min, max, is_blocked = false, pid }) {
-  const [amount, setAmount] = useState(min);
+  const quantity = useSelector((state) => getProductQuantity(state, pid));
+  const dispatch = useDispatch();
 
+  function setQuantity(newQuantity) {
+    dispatch(setProductQuantity({ pid: pid, quantity: newQuantity }));
+  }
   function decreaseAmount() {
-    if (is_blocked || amount <= min) {
+    if (is_blocked || quantity <= min) {
       return;
     }
-    setAmount(amount - 1);
-    verifyAmount(amount - 1);
+    setQuantity(quantity - 1);
+    verifyAmount(quantity - 1);
   }
 
   function increaseAmount() {
-    if (is_blocked || amount >= max) {
+    if (is_blocked || quantity >= max) {
       return;
     }
-    setAmount(amount + 1);
-    verifyAmount(amount + 1);
+    setQuantity(quantity + 1);
+    verifyAmount(quantity + 1);
   }
 
   function verifyAmount(quantity) {
@@ -48,7 +54,7 @@ export default function CartAmount({ min, max, is_blocked = false, pid }) {
       quantity: quantity,
       pid: pid,
     };
-    checkProduct(data, () => setAmount(min));
+    checkProduct(data, () => setQuantity(min));
   }
 
   return (
@@ -59,7 +65,7 @@ export default function CartAmount({ min, max, is_blocked = false, pid }) {
         color={"red"}
         onClick={decreaseAmount}
       />
-      <Texts align="center">{amount}</Texts>
+      <Texts align="center">{quantity}</Texts>
       <FontAwesomeIconClickable
         is_blocked={is_blocked ? 1 : 0}
         icon={faPlus}
